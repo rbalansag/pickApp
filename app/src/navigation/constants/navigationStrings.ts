@@ -1,0 +1,32 @@
+export default {
+  BRAND_NAME: "Main Stack", // Change Brand name if new project
+  LANDING: "Landing",
+
+  AUTHENTICATION: "authentication",
+  AUTHENTICATION_LANDING: "authenticationLanding",
+  LOGIN: "login",
+  LOGIN_FORM: "loginForm",
+  AUTHENTICATED: "authenticated",
+  MAIN_NAVIGATION: "mainNavigation",
+  HOME: "home",
+  HOME_LANDING: "homeLanding",
+  SEARCH: "search",
+  NEW_LEAD: "newLead",
+  NEW_LEAD_FORM: "newLeadForm",
+  NEW_LEAD_CONFIRMATION: "newLeadConfirmation",
+  NEW_LEAD_FAMILY: "newLeadFamily",
+  FIND_LOCATION: "findLocation",
+  NOTIFICATION: "notification",
+  RECENT_ACTIVITIES: "recentActivities",
+  CONTACTS: "contacts",
+  VIEW_CONTACT: "viewContact",
+  VIEW_CONTACT_LANDING: "viewContactLanding",
+  EDIT_CONTACT: "editContact",
+  ADD_ACTIVITY: "addActivity",
+  ACTIVITIES: "activities",
+  MAPS: "maps",
+  PROFILE: "profile",
+  EXAMPLE: "example",
+  ADD_NOTE: "addNote",
+
+};
