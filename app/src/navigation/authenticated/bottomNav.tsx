@@ -1,14 +1,11 @@
-// library imports
 import React, { useRef } from "react";
 import { ActivityIndicator, Platform, StyleSheet, TouchableOpacity } from "react-native";
 import { register } from "react-native-bundle-splitter";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Colors, Text, View, Button, Toast } from "react-native-ui-lib";
-// component imports
+import { Colors, Text, View } from "react-native-ui-lib";
 import navigationStrings from "../constants/navigationStrings"
-import { resetToast, selectToast } from "../../redux/slice/toast_slice";
-const MapsScreen = register({ loader: () => import("../../screens/authenticated/map"), group: "MAPS", name: navigationStrings.MAPS });
 const HomeScreen = register({ loader: () => import("../../screens/authenticated/home"), group: "MAPS", name: navigationStrings.HOME_LANDING });
+const RecordScreen = register({ loader: () => import("../../screens/authenticated/record"), group: "MAPS", name: navigationStrings.MAPS });
 const ProfileScreen = register({ loader: () => import("../../screens/authenticated/profile"), group: "MAPS", name: navigationStrings.PROFILE });
 
 const Tab = createBottomTabNavigator();
@@ -39,8 +36,8 @@ const tabIcon = (icon, label, focused) => {
    )
 }
 
-const HomeIcon = { tabBarIcon: ({ focused }) => tabIcon('Home', 'Home', focused), headerShown: false }
-const MapsIcon = { tabBarIcon: ({ focused }) => tabIcon('Map', 'Map', focused), headerShown: false, tabBarLabel: "Log" }
+const HomeIcon = { tabBarIcon: ({ focused }) => tabIcon('Map', 'Map', focused), headerShown: false }
+const RecordIcon = { tabBarIcon: ({ focused }) => tabIcon('Record', 'Record', focused), headerShown: false, tabBarLabel: "Log" }
 const ProfileIcon = { tabBarIcon: ({ focused }) => tabIcon('Profile', 'Profile', focused), headerShown: false }
 
 
@@ -92,9 +89,9 @@ export default function Index(props) {
                component={HomeScreen}
             />
             <Tab.Screen
-               options={MapsIcon}
+               options={RecordIcon}
                name={navigationStrings.MAPS}
-               component={MapsScreen}
+               component={RecordScreen}
             />
             <Tab.Screen
                options={ProfileIcon}

@@ -20,6 +20,5 @@ export const { resetUser, setUser } = userSlice.actions;
 
 export const selectUser = (state) => state.user.userData;
 
-export const selectActiveBooking = (state) => state.logBook.activeBooking;
 
 export default userSlice.reducer;

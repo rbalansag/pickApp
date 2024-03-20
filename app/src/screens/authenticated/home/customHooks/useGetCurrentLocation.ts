@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from "uuid";
-import { resetLogBook, setLogBook } from '../../../../redux/slice/logBook_slice';
+import { resetLogBook, setLogBook } from '../../../../redux/slice/bookingPool_slice';
 import Geolocation from '@react-native-community/geolocation';
 
 interface iAPIStatus {

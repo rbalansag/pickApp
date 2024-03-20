@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import toast_slice from "./slice/toast_slice";
 import auth_slice from "./slice/auth_slice";
 import user_slice from "./slice/user_slice";
-import logBook_slice from "./slice/logBook_slice";
+import bookingPool_slice from "./slice/bookingPool_slice";
 
 
 const persistConfig = {
@@ -19,7 +19,7 @@ const reducer = combineReducers({
    toast: toast_slice,
    auth: auth_slice,
    user: user_slice,
-   logBook: logBook_slice,
+   bookingPool: bookingPool_slice,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducer);

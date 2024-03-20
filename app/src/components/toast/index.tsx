@@ -7,7 +7,6 @@ import { PanResponder, Animated } from "react-native";
 export default function Index(props) {
   const toast = useSelector(selectToast);
   const dispatch = useDispatch();
-
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
@@ -37,16 +36,20 @@ export default function Index(props) {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "center",
             margin: 20,
             padding: 20,
-            backgroundColor: Colors.bgDefault,
+            backgroundColor: Colors.white,
             elevation: 3,
             marginTop: 20,
-            borderRadius: 10
+            borderRadius: 10,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.2,
+            shadowRadius: 6,
           }}
         >
-          <Text color={toast.color} style={{ marginLeft: 10 }}>{toast?.message}</Text>
+          <Text color={toast.color} style={{ textAlign: 'center' }}>{toast?.message}</Text>
         </Animated.View>
       </Toast>
     </>

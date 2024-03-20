@@ -8,30 +8,31 @@ import { Button, Colors, Text, TouchableOpacity, View } from 'react-native-ui-li
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 import useGetBookingInfo from './customHooks/useGetBookingInfo';
-import { resetLogBook, selectActive, selectLog, selectLogBook, setLogBook } from '../../../redux/slice/logBook_slice';
+import { resetBookingPool, selectBookingPool, selectActive, setBookingPool, selectComplete, resetActive, resetActivePool } from '../../../redux/slice/bookingPool_slice';
 import useGetCurrentLocation from './customHooks/useGetCurrentLocation';
 import Modal from './components/modal';
 import MapMarker from './components/mapMarkers'
+import { setToast } from '../../../redux/slice/toast_slice';
 
 const windowHeight = Dimensions.get('window').height;
 const refreshRate = 30000;
 
+
 export default function MapScreen() {
     const dispatch = useDispatch();
-    // dispatch(resetLogBook())
     const user = useSelector(selectUser);
-    const LogBook = useSelector(selectLog);
+    const BookingPool = useSelector(selectBookingPool);
     const ActiveBooking = useSelector(selectActive);
+    const CompletedBooking = useSelector(selectComplete);
 
-    useGetBookingInfo(user, ActiveBooking);
     const { currentLocation } = useGetCurrentLocation(user, refreshRate);
+    useGetBookingInfo(user, BookingPool, ActiveBooking, CompletedBooking);
 
     const [showTemporaryMarkers, setShowTemporaryMarkers] = useState(false);
     const [tempMarkersCoords, setTempMarkersCoords] = useState({ latitude: 0, longitude: 0 });
 
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
-
 
     // Redirect to users current location
     const handleMapReady = () => {
@@ -75,41 +76,87 @@ export default function MapScreen() {
     const handleActiveMarker = () => {
         setIsModalVisible(true);
         setSelectedUser(ActiveBooking[0])
-
     }
 
-    const handleAccept = (id) => {
-        const updatedBookings = LogBook.map((booking) =>
-            booking.id === id ? { ...booking, status: 'accepted', driverId: user.userId } : booking
-        );
-        dispatch(setLogBook({ log: updatedBookings }));
-
-        const acceptedBooking = updatedBookings.filter((booking) =>
-            booking.id === id && booking.status === 'accepted'
-        );
-        setTempMarkersCoords({ latitude: 0, longitude: 0 });
-
-        setShowTemporaryMarkers(false);
-        setSelectedUser(acceptedBooking[0])
-        dispatch(setLogBook({ active: acceptedBooking }));
-        // run api here to update the BE that that booking is taken
-    };
-
-
-    const handleDecline = (id) => {
-        const updatedBookings = LogBook.map((booking) =>
-            booking.id === id ? { ...booking, status: 'declined' } : booking
-        );
-        closeModal()
-        dispatch(setLogBook({ log: updatedBookings }));
-
-    };
 
     const closeModal = () => {
         setIsModalVisible(false);
         setShowTemporaryMarkers(false);
         setTempMarkersCoords({ latitude: 0, longitude: 0 });
         setSelectedUser(null);
+    };
+
+
+    // dispatch(resetBookingPool())
+    // console.log(BookingPool?.length, 11)
+    // console.log(ActiveBooking.length, 22)
+    // console.log(CompletedBooking.length, 33)
+    const handleStatusTransition = (id, newStatus) => {
+        dispatch(setToast({
+            visible: true,
+            color: Colors.green30,
+            icon: "CheckCircle",
+            message: `Booking status is now ${newStatus}`,
+        }))
+
+        const updatedBookings = BookingPool.map((booking) =>
+            booking.id === id ? { ...booking, status: newStatus, driverId: user.id } : booking
+        );
+        
+        const selectedUser = updatedBookings.find((booking) => booking.id === id);
+        setSelectedUser(selectedUser);
+
+        setSelectedUser(selectedUser);
+        dispatch(setBookingPool({ pool: updatedBookings }));
+
+        if (newStatus === 'declined') {
+            const declinedBooking  = updatedBookings.filter((booking) => booking.id !== id);
+            dispatch(setBookingPool({ pool: declinedBooking }));
+        }
+    
+
+        if (newStatus === 'accepted') {
+            const acceptedBooking = updatedBookings.filter(
+                (booking) => booking.id === id && booking.status === 'accepted'
+            );
+            dispatch(setBookingPool({ active: acceptedBooking }));
+        }
+
+        if (newStatus === 'started') {
+            const startedBooking = updatedBookings.filter(
+                (booking) => booking.id === id && booking.status === 'started'
+            );
+            dispatch(setBookingPool({ active: startedBooking }));
+        }
+
+        if (newStatus === 'picked-up') {
+            const pickedUpBooking = updatedBookings.map((booking) =>
+                booking.id === id ? { ...booking, status: 'picked-up', pickupTime: new Date() } : booking
+            );
+            dispatch(setBookingPool({ pool: pickedUpBooking }));
+
+            const pickedUpBookingActive = pickedUpBooking.filter(
+                (booking) => booking.id === id && booking.status === 'picked-up'
+            );
+            dispatch(setBookingPool({ active: pickedUpBookingActive }));
+        }
+
+        if (newStatus === 'dropped-off') {
+            const droppedOffBooking = updatedBookings.filter(
+                (booking) => booking.id === id && booking.status === 'dropped-off'
+            );
+            dispatch(setBookingPool({ completed: [...CompletedBooking, ...droppedOffBooking] }));
+            dispatch(resetActivePool());
+            closeModal();
+        }
+    };
+
+    const handleDecline = (id) => {
+        const updatedBookings = BookingPool.map((booking) =>
+            booking.id === id ? { ...booking, status: 'declined' } : booking
+        );
+        closeModal()
+        dispatch(setBookingPool({ pool: updatedBookings }));
     };
 
 
@@ -137,7 +184,7 @@ export default function MapScreen() {
                 <MapMarker
                     ActiveBooking={ActiveBooking}
                     handleActiveMarker={handleActiveMarker}
-                    LogBook={LogBook}
+                    LogBook={BookingPool}
                     handleMarkerPress={handleMarkerPress}
                     showTemporaryMarkers={showTemporaryMarkers}
                     tempMarkersCoords={tempMarkersCoords}
@@ -149,7 +196,7 @@ export default function MapScreen() {
                 closeModal={closeModal}
                 selectedUser={selectedUser}
                 windowHeight={windowHeight}
-                handleAccept={handleAccept}
+                handleStatusTransition={handleStatusTransition}
                 handleDecline={handleDecline}
             />
         </View>

@@ -12,6 +12,7 @@ export default {
   HOME_LANDING: "homeLanding",
   CONTACTS: "contacts",
   MAPS: "maps",
+  USERRECORD: "userRecord",
   PROFILE: "profile",
 
 };
