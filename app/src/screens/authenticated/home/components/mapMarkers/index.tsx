@@ -3,36 +3,38 @@ import { Marker } from 'react-native-maps';
 import { Colors, View } from 'react-native-ui-lib';
 
 export default function index(props) {
-  const { ActiveBooking, handleActiveMarker, LogBook, handleMarkerPress, showTemporaryMarkers, tempMarkersCoords } = props;
+  const { user, ActiveBooking, handleActiveMarker, BookingPool, handleMarkerPress, showTemporaryMarkers, tempMarkersCoords } = props;
 
   return (
     <>
       {ActiveBooking?.length > 0 ?
         ActiveBooking?.map((client, index) => (
           <React.Fragment key={client.id}>
-            <Marker
-              coordinate={{
-                latitude: client.pickupLocation.latitude,
-                longitude: client.pickupLocation.longitude,
-              }}
-              title={`To ${client.destination.streetName}`}
-              description={`from ${client.pickupLocation.streetName} ${client.destination.distance}`}
-              onPress={handleActiveMarker}
-            >
-              <View
-                style={{
-                  borderRadius: 100,
-                  width: 20,
-                  height: 20,
-                  backgroundColor: client.status === "pending" ? Colors.yellow20 : Colors.green30,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 3,
-                  elevation: 5,
+            {client.driverId === user.id && (
+              <Marker
+                coordinate={{
+                  latitude: client.pickupLocation.latitude,
+                  longitude: client.pickupLocation.longitude,
                 }}
-              />
-            </Marker>
+                title={`To ${client.destination.streetName}`}
+                description={`from ${client.pickupLocation.streetName} ${client.destination.distance}`}
+                onPress={handleActiveMarker}
+              >
+                <View
+                  style={{
+                    borderRadius: 100,
+                    width: 20,
+                    height: 20,
+                    backgroundColor: client.status === "pending" ? Colors.orange30 : Colors.green30,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3,
+                    elevation: 5,
+                  }}
+                />
+              </Marker>
+            )}
             <Marker
               coordinate={{
                 latitude: client.destination.latitude,
@@ -47,7 +49,7 @@ export default function index(props) {
                   borderRadius: 100,
                   width: 20,
                   height: 20,
-                  backgroundColor: client.status === "pending" ? Colors.yellow20 : Colors.green30,
+                  backgroundColor: client.status === "pending" ? Colors.orange30 : Colors.green30,
                   shadowColor: '#000',
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.25,
@@ -59,9 +61,12 @@ export default function index(props) {
           </React.Fragment>
         ))
         :
-        LogBook?.map((client) => {
+        BookingPool?.map((client) => {
           if (client.status === "declined" || client.status === "dropped-off") {
             return null;
+          }
+          if (client.driverId !== null) {
+            return null; // Skip if driverId is not null
           }
           return (
             <React.Fragment key={client.id}>
@@ -79,7 +84,7 @@ export default function index(props) {
                     borderRadius: 100,
                     width: 20,
                     height: 20,
-                    backgroundColor: client.status === "pending" ? Colors.yellow20 : Colors.green30,
+                    backgroundColor: client.status === "pending" ? Colors.orange30 : Colors.green30,
                     shadowColor: '#000',
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: 0.25,

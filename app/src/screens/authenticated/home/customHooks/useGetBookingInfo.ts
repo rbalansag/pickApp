@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from "uuid";
 import { setBookingPool } from '../../../../redux/slice/bookingPool_slice';
 
-export default function useGetBookingInfo(user, BookingPool, ActiveBooking, CompletedBooking) {
+export default function useGetBookingInfo(user, BookingPool, ActiveBooking, CompletedBooking, reload) {
     const dispatch = useDispatch();
     const currentLocation = user;
 
@@ -31,7 +31,7 @@ export default function useGetBookingInfo(user, BookingPool, ActiveBooking, Comp
 
         dispatch(setBookingPool({ pool: res }));
 
-    }, [CompletedBooking, currentLocation]);
+    }, [CompletedBooking, currentLocation, reload]);
 
     return null;
 }

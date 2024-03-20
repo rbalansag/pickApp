@@ -71,18 +71,18 @@ export default function index(props) {
     }
 
     return (
-        <View useSafeArea={true} flex>
+        <View useSafeArea={true} flex backgroundColor={Colors.green40}>
             <View flex paddingH-30 centerV paddingT-60>
                 <View width={windowWidth / 1.5}>
-                    <Text text20L underline>Pick app</Text>
-                    <Text text40 color={"#5848ff"}>Lets get to your destination</Text>
+                    <Text text20L underline color={Colors.white}>Pick app</Text>
+                    <Text text40 color={Colors.white}>Lets get to your destination</Text>
                 </View>
             </View>
             <View flex paddingH-30 centerV>
                 <Button
                     label={'Login'}
                     onPress={handleLogin}
-                    backgroundColor={Colors.dark}
+                    backgroundColor={Colors.orange30}
                     enableShadow={true}
                     size={Button.sizes.large} />
             </View>

@@ -39,7 +39,7 @@ export default function Index(props) {
             justifyContent: "center",
             margin: 20,
             padding: 20,
-            backgroundColor: Colors.white,
+            backgroundColor: toast.color,
             elevation: 3,
             marginTop: 20,
             borderRadius: 10,
@@ -49,7 +49,7 @@ export default function Index(props) {
             shadowRadius: 6,
           }}
         >
-          <Text color={toast.color} style={{ textAlign: 'center' }}>{toast?.message}</Text>
+          <Text color={Colors.white} style={{ textAlign: 'center' }}>{toast?.message}</Text>
         </Animated.View>
       </Toast>
     </>

@@ -15,56 +15,69 @@ export default function index(props) {
         >
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                 <TouchableOpacity style={{ flex: 1 }} onPress={closeModal} />
-                <View style={{ backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, height: windowHeight / 2 }}>
-                    <View center>
-                        <Text text30L>Ride Request</Text>
-                    </View>
+                <View style={{
+                    backgroundColor: 'white', borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20, height: windowHeight / 2,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 6,
+                }}>
                     {selectedUser && (
-                        <View flex marginV-30 marginH-20>
-                            <View flex>
-                                <View row marginV-5>
-                                    <Text text50L>Pick up: </Text>
-                                    <Text text50BO color={Colors.yellow20}>{selectedUser.pickupLocation.streetName}</Text>
+                        <View flex paddingH-20>
+                            <View flexS paddingB-40>
+                                <View center>
+                                    <Text text30L>Ride Request</Text>
                                 </View>
-
-                                <View row marginV-5>
-                                    <Text text50L>Destination: </Text>
-                                    <Text text50BO color={Colors.green40}>{selectedUser.destination.streetName}</Text>
-                                </View>
-
-                                <View row marginV-5>
-                                    <Text text50L>Distance: </Text>
-                                    <Text text50BO color={Colors.green40}>{selectedUser.destination.distance}</Text>
+                                <View center marginT-10>
+                                    <Text text50BO>{selectedUser.status.toUpperCase()}</Text>
                                 </View>
                             </View>
-                            <View spread row paddingV-20 gap-20>
-                                {selectedUser.status === 'pending' &&
+                            <View flex>
+                                <View flex>
+                                    <View row marginV-5>
+                                        <Text text50L>Pick up: </Text>
+                                        <Text text50BO color={Colors.orange30}>{selectedUser.pickupLocation.streetName}</Text>
+                                    </View>
+
+                                    <View row marginV-5>
+                                        <Text text50L>Destination: </Text>
+                                        <Text text50BO color={Colors.green40}>{selectedUser.destination.streetName}</Text>
+                                    </View>
+
+                                    <View row marginV-5>
+                                        <Text text50L>Distance: </Text>
+                                        <Text text50BO color={Colors.green40}>{selectedUser.destination.distance}</Text>
+                                    </View>
+                                </View>
+                                <View spread row paddingV-20 gap-20>
+                                    {selectedUser.status === 'pending' &&
+                                        <Button
+                                            label={'Decline'}
+                                            outlineColor={Colors.red30}
+                                            outline={true}
+                                            flex
+                                            onPress={() => handleDecline(selectedUser.id)}
+                                            size={Button.sizes.large}
+                                        />
+                                    }
                                     <Button
-                                        label={'Decline'}
-                                        outlineColor={Colors.red30}
-                                        outline={true}
+                                        label={selectedUser.status === 'pending' ? 'Accept' :
+                                            selectedUser.status === 'accepted' ? 'Start' :
+                                                selectedUser.status === 'started' ? 'Pick Up' :
+                                                    selectedUser.status === 'picked-up' ? 'Drop Off' :
+                                                        selectedUser.status === 'dropped-off' && 'Completed'}
+                                        backgroundColor={Colors.green30}
+                                        enableShadow={true}
                                         flex
-                                        onPress={() => handleDecline(selectedUser.id)}
+                                        onPress={() => handleStatusTransition(selectedUser.id,
+                                            selectedUser.status === 'pending' ? 'accepted' :
+                                                selectedUser.status === 'accepted' ? 'started' :
+                                                    selectedUser.status === 'started' ? 'picked-up' :
+                                                        selectedUser.status === 'picked-up' ? 'dropped-off' :
+                                                            selectedUser.status === 'dropped-off' && 'completed')}
                                         size={Button.sizes.large}
                                     />
-                                }
-                                <Button
-                                    label={selectedUser.status === 'pending' ? 'Accept' :
-                                        selectedUser.status === 'accepted' ? 'Start' :
-                                            selectedUser.status === 'started' ? 'Pick Up' :
-                                                selectedUser.status === 'picked-up' ? 'Drop Off' :
-                                                    selectedUser.status === 'dropped-off' && 'Completed'}
-                                    backgroundColor={Colors.green30}
-                                    enableShadow={true}
-                                    flex
-                                    onPress={() => handleStatusTransition(selectedUser.id,
-                                        selectedUser.status === 'pending' ? 'accepted' :
-                                            selectedUser.status === 'accepted' ? 'started' :
-                                                selectedUser.status === 'started' ? 'picked-up' :
-                                                    selectedUser.status === 'picked-up' ? 'dropped-off' :
-                                                        selectedUser.status === 'dropped-off' && 'completed')}
-                                    size={Button.sizes.large}
-                                />
+                                </View>
                             </View>
                         </View>
                     )}

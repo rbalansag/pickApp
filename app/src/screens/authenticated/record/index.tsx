@@ -1,6 +1,6 @@
 import React from 'react';
 import { FlatList, StyleSheet } from 'react-native';
-import { Text, View, TouchableOpacity, Colors } from 'react-native-ui-lib';
+import { Text, View, Colors } from 'react-native-ui-lib';
 import { useSelector } from 'react-redux';
 import { selectComplete } from '../../../redux/slice/bookingPool_slice';
 
@@ -12,6 +12,9 @@ export default function Index() {
     acc[dateKey] = acc[dateKey] ? [...acc[dateKey], item] : [item];
     return acc;
   }, {});
+
+  // Sort the keys in ascending order
+  const sortedKeys = Object.keys(groupedData).sort((a, b) => new Date(a) - new Date(b));
 
   const renderItem = ({ item }) => {
     const formatTime = (dateString) => {
@@ -34,7 +37,7 @@ export default function Index() {
         <View row spread>
           <View row marginV-2>
             <Text text70L>From: </Text>
-            <Text text70BO color={Colors.yellow20}>{item.pickupLocation.streetName}</Text>
+            <Text text70BO color={Colors.orange30}>{item.pickupLocation.streetName}</Text>
           </View>
           <View row marginV-2>
             <Text text70L>To: </Text>
@@ -53,7 +56,7 @@ export default function Index() {
 
   return (
     <View style={styles.container} useSafeArea={true}>
-      {Object.keys(groupedData).map((dateKey) => (
+      {sortedKeys.map((dateKey) => (
         <View key={dateKey}>
           <FlatList
             data={groupedData[dateKey]}

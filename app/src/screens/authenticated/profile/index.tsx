@@ -4,6 +4,7 @@ import navigationStrings from '../../../navigation/constants/navigationStrings';
 import { useDispatch } from 'react-redux';
 import { resetAuth } from '../../../redux/slice/auth_slice';
 import { Text, View, TouchableOpacity } from 'react-native-ui-lib';
+import { resetToast } from '../../../redux/slice/toast_slice';
 
 const navigationPanel = ["User", "Logout"];
 
@@ -23,6 +24,7 @@ export default function Index(props) {
       props.navigation.replace(navigationStrings.AUTHENTICATION);
 
       dispatch(resetAuth())
+      dispatch(resetToast())
     }
   };
 

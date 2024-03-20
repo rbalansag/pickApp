@@ -25,14 +25,36 @@ export default function MapScreen() {
     const ActiveBooking = useSelector(selectActive);
     const CompletedBooking = useSelector(selectComplete);
 
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [reload, setReload] = useState(false);
+
     const { currentLocation } = useGetCurrentLocation(user, refreshRate);
-    useGetBookingInfo(user, BookingPool, ActiveBooking, CompletedBooking);
+    useGetBookingInfo(user, BookingPool, ActiveBooking, CompletedBooking, reload);
 
     const [showTemporaryMarkers, setShowTemporaryMarkers] = useState(false);
     const [tempMarkersCoords, setTempMarkersCoords] = useState({ latitude: 0, longitude: 0 });
 
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
+
+    useEffect(() => {
+        const allDeclinedOrEmpty = BookingPool.every(
+            (booking) => booking.status === 'declined' || BookingPool.length === 0
+        );
+
+        if (allDeclinedOrEmpty) {
+            dispatch(
+                setToast({
+                    visible: true,
+                    color: Colors.orange20,
+                    icon: 'CheckCircle',
+                    message: `No booking.. I'll help you look, please wait`,
+                })
+            );
+            setTimeout(() => {
+                setReload(!reload);
+            }, 2000);
+        }
+    }, [BookingPool, dispatch]);
 
     // Redirect to users current location
     const handleMapReady = () => {
@@ -47,12 +69,16 @@ export default function MapScreen() {
         }
     };
 
+    // Redirect the map to the marker and set the selected booking to the modal
     const handleMarkerPress = (client) => {
+
+        // Show temporary markers and set their coordinates
         setShowTemporaryMarkers(true);
         setTempMarkersCoords({
             latitude: client.destination.latitude,
             longitude: client.destination.longitude,
         });
+
         setSelectedUser(client);
         setIsModalVisible(true);
 
@@ -65,9 +91,15 @@ export default function MapScreen() {
         const offsetMidLongitude = midLongitude;
 
         // Animate map to the offset midpoint
+        animateMapToOffsetMidpoint(offsetMidLatitude, offsetMidLongitude);
+    };
+
+    // Add comments to explain the purpose of the function
+    const animateMapToOffsetMidpoint = (latitude, longitude) => {
+        // Animate map to the offset midpoint
         this.mapRef.animateToRegion({
-            latitude: offsetMidLatitude,
-            longitude: offsetMidLongitude,
+            latitude,
+            longitude,
             latitudeDelta: 0.02,
             longitudeDelta: 0.02,
         }, 1000);
@@ -78,7 +110,6 @@ export default function MapScreen() {
         setSelectedUser(ActiveBooking[0])
     }
 
-
     const closeModal = () => {
         setIsModalVisible(false);
         setShowTemporaryMarkers(false);
@@ -86,36 +117,40 @@ export default function MapScreen() {
         setSelectedUser(null);
     };
 
-
-    // dispatch(resetBookingPool())
-    // console.log(BookingPool?.length, 11)
-    // console.log(ActiveBooking.length, 22)
-    // console.log(CompletedBooking.length, 33)
+    /**
+     * This function handles the transition of booking status based on the newStatus parameter.
+     * It updates the selectedUser state, updates the booking pool in Redux state, and dispatches actions accordingly.
+    */
     const handleStatusTransition = (id, newStatus) => {
-        dispatch(setToast({
-            visible: true,
-            color: Colors.green30,
-            icon: "CheckCircle",
-            message: `Booking status is now ${newStatus}`,
-        }))
-
+        dispatch(
+            setToast({
+                visible: true,
+                color: Colors.green30,
+                icon: 'CheckCircle',
+                message: `Status has updated to ${newStatus}`,
+            })
+        );
         const updatedBookings = BookingPool.map((booking) =>
             booking.id === id ? { ...booking, status: newStatus, driverId: user.id } : booking
         );
-        
+
+        // Find the updated booking with the provided ID
         const selectedUser = updatedBookings.find((booking) => booking.id === id);
+        // Update the selectedUser state
         setSelectedUser(selectedUser);
 
-        setSelectedUser(selectedUser);
+        // Dispatch action to update the booking pool in Redux state
         dispatch(setBookingPool({ pool: updatedBookings }));
 
+        // Handle different status transitions and dispatch corresponding actions
         if (newStatus === 'declined') {
-            const declinedBooking  = updatedBookings.filter((booking) => booking.id !== id);
+            // Filter out the declined booking from the updated bookings
+            const declinedBooking = updatedBookings.filter((booking) => booking.id !== id);
             dispatch(setBookingPool({ pool: declinedBooking }));
         }
-    
 
         if (newStatus === 'accepted') {
+            // Filter the accepted booking based on ID and status
             const acceptedBooking = updatedBookings.filter(
                 (booking) => booking.id === id && booking.status === 'accepted'
             );
@@ -123,6 +158,7 @@ export default function MapScreen() {
         }
 
         if (newStatus === 'started') {
+            // Filter the started booking based on ID and status
             const startedBooking = updatedBookings.filter(
                 (booking) => booking.id === id && booking.status === 'started'
             );
@@ -130,11 +166,13 @@ export default function MapScreen() {
         }
 
         if (newStatus === 'picked-up') {
+            // Update the status of the picked-up booking and set pickupTime
             const pickedUpBooking = updatedBookings.map((booking) =>
                 booking.id === id ? { ...booking, status: 'picked-up', pickupTime: new Date() } : booking
             );
             dispatch(setBookingPool({ pool: pickedUpBooking }));
 
+            // Filter the active picked-up booking
             const pickedUpBookingActive = pickedUpBooking.filter(
                 (booking) => booking.id === id && booking.status === 'picked-up'
             );
@@ -142,20 +180,29 @@ export default function MapScreen() {
         }
 
         if (newStatus === 'dropped-off') {
+            // Filter the dropped-off booking based on ID and status
             const droppedOffBooking = updatedBookings.filter(
                 (booking) => booking.id === id && booking.status === 'dropped-off'
             );
+            // Update completed bookings in Redux state
             dispatch(setBookingPool({ completed: [...CompletedBooking, ...droppedOffBooking] }));
+            // Reset active bookings and close modal
             dispatch(resetActivePool());
             closeModal();
         }
     };
 
+    /**
+     * Handle declining a booking by removing it from the BookingPool array.
+     */
     const handleDecline = (id) => {
-        const updatedBookings = BookingPool.map((booking) =>
-            booking.id === id ? { ...booking, status: 'declined' } : booking
-        );
-        closeModal()
+        // Filter out the declined booking from the BookingPool
+        const updatedBookings = BookingPool.filter((booking) => booking.id !== id);
+
+        // Close modal
+        closeModal();
+
+        // Update the booking pool in Redux state
         dispatch(setBookingPool({ pool: updatedBookings }));
     };
 
@@ -182,9 +229,10 @@ export default function MapScreen() {
                 onMapReady={handleMapReady}
             >
                 <MapMarker
+                    user={user}
                     ActiveBooking={ActiveBooking}
                     handleActiveMarker={handleActiveMarker}
-                    LogBook={BookingPool}
+                    BookingPool={BookingPool}
                     handleMarkerPress={handleMarkerPress}
                     showTemporaryMarkers={showTemporaryMarkers}
                     tempMarkersCoords={tempMarkersCoords}
