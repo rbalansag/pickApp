@@ -1535,6 +1535,11 @@
   dependencies:
     merge-options "^3.0.4"
 
+"@react-native-community/blur@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.npmjs.org/@react-native-community/blur/-/blur-4.4.0.tgz"
+  integrity sha512-P+xdT2LIq1ewOsF3zx7C0nu4dj7nxl2NVTsMXEzRDjM3bWMdrrEbTRA7uwPV5ngn7/BXIommBPlT/JW4SAedrw==
+
 "@react-native-community/cli-clean@12.3.6":
   version "12.3.6"
   resolved "https://registry.npmjs.org/@react-native-community/cli-clean/-/cli-clean-12.3.6.tgz"
@@ -2109,6 +2114,11 @@
   version "0.0.3"
   resolved "https://registry.npmjs.org/@types/use-sync-external-store/-/use-sync-external-store-0.0.3.tgz"
   integrity sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==
+
+"@types/uuid@^9.0.8":
+  version "9.0.8"
+  resolved "https://registry.npmjs.org/@types/uuid/-/uuid-9.0.8.tgz"
+  integrity sha512-jg+97EGIcY9AGHJJRaaPVgetKDsrTgbRjQ5Msgjh/DQKEFl0DtyRr/VCOyD1T2R1MNeWPK/u7JoGhlDZnKBAfA==
 
 "@types/yargs-parser@*":
   version "21.0.3"
@@ -3779,6 +3789,11 @@ expect@^29.7.0:
     jest-matcher-utils "^29.7.0"
     jest-message-util "^29.7.0"
     jest-util "^29.7.0"
+
+fast-base64-decode@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/fast-base64-decode/-/fast-base64-decode-1.0.0.tgz"
+  integrity sha512-qwaScUgUGBYeDNRnbc/KyllVU88Jk1pRHPStuF/lO7B0/RTRLj7U0lkdTAutlBblY08rwZDff6tNU9cjv6j//Q==
 
 fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
   version "3.1.3"
@@ -6122,6 +6137,13 @@ react-native-gesture-handler@*, react-native-gesture-handler@^2.15.0, "react-nat
     lodash "^4.17.21"
     prop-types "^15.7.2"
 
+react-native-get-random-values@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.npmjs.org/react-native-get-random-values/-/react-native-get-random-values-1.11.0.tgz"
+  integrity sha512-4BTbDbRmS7iPdhYLRcz3PGFIpFJBwNZg9g42iwa2P6FOv9vZj/xJc678RZXnLNZzd0qd7Q3CCF6Yd+CU2eoXKQ==
+  dependencies:
+    fast-base64-decode "^1.0.0"
+
 react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"
   resolved "https://registry.npmjs.org/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz"
@@ -6204,7 +6226,7 @@ react-native-ui-lib@^7.18.3:
     url-parse "^1.2.0"
     wix-react-native-text-size "~1.0.0"
 
-react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@>= 0.64.3", react-native@>=0.42.0, react-native@>=0.57, react-native@>=0.59, react-native@>=0.59.0, react-native@>=0.59.1, react-native@>=0.64.1, react-native@>=0.69, react-native@0.73.6:
+react-native@*, "react-native@^0.0.0-0 || >=0.60 <1.0", "react-native@>= 0.64.3", react-native@>=0.42.0, react-native@>=0.56, react-native@>=0.57, react-native@>=0.59, react-native@>=0.59.0, react-native@>=0.59.1, react-native@>=0.64.1, react-native@>=0.69, react-native@0.73.6:
   version "0.73.6"
   resolved "https://registry.npmjs.org/react-native/-/react-native-0.73.6.tgz"
   integrity sha512-oqmZe8D2/VolIzSPZw+oUd6j/bEmeRHwsLn1xLA5wllEYsZ5zNuMsDus235ONOnCRwexqof/J3aztyQswSmiaA==
@@ -7249,6 +7271,11 @@ utils-merge@1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/utils-merge/-/utils-merge-1.0.1.tgz"
   integrity sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==
+
+uuid@^9.0.1:
+  version "9.0.1"
+  resolved "https://registry.npmjs.org/uuid/-/uuid-9.0.1.tgz"
+  integrity sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==
 
 v8-to-istanbul@^9.0.1:
   version "9.2.0"

@@ -18,9 +18,8 @@ export const userSlice = createSlice({
 
 export const { resetUser, setUser } = userSlice.actions;
 
-export const selectUser = (state) => state.user.user;
+export const selectUser = (state) => state.user.userData;
 
-export const selectUserFullName = (state) => state.user?.user?.FullName;
-export const selectUserEmail = (state) => state.user?.user?.EmailAddress;
+export const selectActiveBooking = (state) => state.logBook.activeBooking;
 
 export default userSlice.reducer;
