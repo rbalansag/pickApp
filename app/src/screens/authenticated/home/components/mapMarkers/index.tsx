@@ -7,7 +7,6 @@ export default function index(props) {
   const { user, ActiveBooking, handleActiveMarker, BookingPool, handleMarkerPress, showTemporaryMarkers, tempMarkersCoords, currentLocation } = props;
 
   const statusDestination = ActiveBooking?.[0]?.status === "started" ? "pickupLocation" : ActiveBooking?.[0]?.status === "picked-up" ? "destination" : null;
-  
   return (
     <>
       {(statusDestination) &&
@@ -19,7 +18,7 @@ export default function index(props) {
           }}
           apikey={"AIzaSyDvv65niVVwpzlkCfMBPCLb_-KyRqoA4qg"}
           strokeWidth={8}
-          strokeColor={Colors.blue40}
+          strokeColor={Colors.orange20}
         />
       }
       {ActiveBooking?.length > 0 ?
