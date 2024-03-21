@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { SectionList, StyleSheet } from 'react-native';
 import { Text, View, Colors } from 'react-native-ui-lib';
 import { useSelector } from 'react-redux';
 import { selectComplete } from '../../../redux/slice/bookingPool_slice';
@@ -13,8 +13,12 @@ export default function Index() {
     return acc;
   }, {});
 
-  // Sort the keys in ascending order
-  const sortedKeys = Object.keys(groupedData).sort((a, b) => new Date(a) - new Date(b));
+  const sortedSections = Object.keys(groupedData)
+    .sort((a, b) => new Date(b) - new Date(a)) // Sort from latest to oldest
+    .map((dateKey) => ({
+      title: dateKey,
+      data: groupedData[dateKey],
+    }));
 
   const renderItem = ({ item }) => {
     const formatTime = (dateString) => {
@@ -48,24 +52,20 @@ export default function Index() {
     );
   };
 
-  const ListHeader = ({ dateKey }) => (
+  const renderSectionHeader = ({ section: { title } }) => (
     <View style={styles.headerContainer}>
-      <Text style={styles.headerText}>{dateKey}</Text>
+      <Text style={styles.headerText}>{title}</Text>
     </View>
   );
 
   return (
     <View style={styles.container} useSafeArea={true}>
-      {sortedKeys.map((dateKey) => (
-        <View key={dateKey}>
-          <FlatList
-            data={groupedData[dateKey]}
-            renderItem={renderItem}
-            ListHeaderComponent={() => <ListHeader dateKey={dateKey} />}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </View>
-      ))}
+      <SectionList
+        sections={sortedSections.reverse()} // Reverse to display from latest to oldest
+        renderItem={renderItem}
+        renderSectionHeader={renderSectionHeader}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }
@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     paddingHorizontal: 20,
     paddingVertical: 10,
+    backgroundColor: Colors.lightgrey,
   },
   headerText: {
     fontSize: 18,
