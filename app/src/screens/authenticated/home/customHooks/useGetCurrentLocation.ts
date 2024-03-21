@@ -14,6 +14,7 @@ export default function useGetCurrentLocation(user, refreshRate) {
   const [currentLocation, setCurrentLocation] = useState(user);
 
   useEffect(() => {
+    fetchUserLocation();
     const intervalId = setInterval(() => {
       fetchUserLocation();
     }, refreshRate);

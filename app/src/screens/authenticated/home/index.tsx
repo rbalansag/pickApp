@@ -30,7 +30,7 @@ export default function MapScreen() {
     const [reload, setReload] = useState(false);
 
     const { currentLocation } = useGetCurrentLocation(user, refreshRate);
-    useGetBookingInfo(user, BookingPool, ActiveBooking, CompletedBooking, reload);
+    useGetBookingInfo(user, refreshRate);
 
     const [showTemporaryMarkers, setShowTemporaryMarkers] = useState(false);
     const [tempMarkersCoords, setTempMarkersCoords] = useState({ latitude: 0, longitude: 0 });
@@ -206,7 +206,10 @@ export default function MapScreen() {
         dispatch(setBookingPool({ pool: updatedBookings }));
     };
 
-
+    if(!currentLocation?.latitude){
+        return <></>
+    }
+    
     return (
         <View style={{ flex: 1 }}>
             <MapView
@@ -230,6 +233,7 @@ export default function MapScreen() {
             >
                 <MapMarker
                     user={user}
+                    currentLocation={currentLocation}
                     ActiveBooking={ActiveBooking}
                     handleActiveMarker={handleActiveMarker}
                     BookingPool={BookingPool}

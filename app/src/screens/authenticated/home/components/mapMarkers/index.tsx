@@ -1,12 +1,27 @@
 import React from 'react';
 import { Marker } from 'react-native-maps';
 import { Colors, View } from 'react-native-ui-lib';
+import MapViewDirections from 'react-native-maps-directions';
 
 export default function index(props) {
-  const { user, ActiveBooking, handleActiveMarker, BookingPool, handleMarkerPress, showTemporaryMarkers, tempMarkersCoords } = props;
+  const { user, ActiveBooking, handleActiveMarker, BookingPool, handleMarkerPress, showTemporaryMarkers, tempMarkersCoords, currentLocation } = props;
 
+  const statusDestination = ActiveBooking?.[0]?.status === "started" ? "pickupLocation" : ActiveBooking?.[0]?.status === "picked-up" ? "destination" : null;
+  
   return (
     <>
+      {(statusDestination) &&
+        <MapViewDirections
+          origin={currentLocation}
+          destination={{
+            latitude: ActiveBooking[0][statusDestination].latitude,
+            longitude: ActiveBooking[0][statusDestination].longitude,
+          }}
+          apikey={"AIzaSyDvv65niVVwpzlkCfMBPCLb_-KyRqoA4qg"}
+          strokeWidth={8}
+          strokeColor={Colors.blue40}
+        />
+      }
       {ActiveBooking?.length > 0 ?
         ActiveBooking?.map((client, index) => (
           <React.Fragment key={client.id}>
