@@ -181,6 +181,7 @@ export default function MapScreen() {
                 const droppedOffBooking = updatedBookings.filter(
                     (booking) => booking.id === id && booking.status === 'dropped-off'
                 );
+                closeModal();
                 // Update completed bookings in Redux state
                 dispatch(setBookingPool({ completed: [...CompletedBooking, ...droppedOffBooking] }));
                 // Reset active bookings and close modal
