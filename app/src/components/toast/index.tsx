@@ -49,7 +49,7 @@ export default function Index(props) {
             shadowRadius: 6,
           }}
         >
-          <Text color={Colors.white} style={{ textAlign: 'center' }}>{toast?.message}</Text>
+          <Text color={Colors.white} style={{ flex: 1, textAlign: 'center' }}>{toast?.message}</Text>
         </Animated.View>
       </Toast>
     </>

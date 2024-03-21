@@ -12,7 +12,7 @@ import { resetBookingPool, selectBookingPool, selectActive, setBookingPool, sele
 import useGetCurrentLocation from './customHooks/useGetCurrentLocation';
 import Modal from './components/modal';
 import MapMarker from './components/mapMarkers'
-import { setToast } from '../../../redux/slice/toast_slice';
+import { resetToast, setToast } from '../../../redux/slice/toast_slice';
 
 const windowHeight = Dimensions.get('window').height;
 const refreshRate = 30000;
@@ -111,6 +111,7 @@ export default function MapScreen() {
     }
 
     const closeModal = () => {
+        dispatch(resetToast())
         setIsModalVisible(false);
         setShowTemporaryMarkers(false);
         setTempMarkersCoords({ latitude: 0, longitude: 0 });
@@ -128,67 +129,65 @@ export default function MapScreen() {
                 color: Colors.green30,
                 icon: 'CheckCircle',
                 message: `Status has updated to ${newStatus}`,
-            })
-        );
+            }))
+        // Add your update state logic here based on newStatus
         const updatedBookings = BookingPool.map((booking) =>
             booking.id === id ? { ...booking, status: newStatus, driverId: user.id } : booking
         );
 
-        // Find the updated booking with the provided ID
+        // Update selectedUser state
         const selectedUser = updatedBookings.find((booking) => booking.id === id);
-        // Update the selectedUser state
         setSelectedUser(selectedUser);
 
         // Dispatch action to update the booking pool in Redux state
         dispatch(setBookingPool({ pool: updatedBookings }));
 
         // Handle different status transitions and dispatch corresponding actions
-        if (newStatus === 'declined') {
-            // Filter out the declined booking from the updated bookings
-            const declinedBooking = updatedBookings.filter((booking) => booking.id !== id);
-            dispatch(setBookingPool({ pool: declinedBooking }));
-        }
+        switch (newStatus) {
+            case 'declined':
+                // Filter out the declined booking from the updated bookings
+                const declinedBooking = updatedBookings.filter((booking) => booking.id !== id);
+                dispatch(setBookingPool({ pool: declinedBooking }));
+                break;
+            case 'accepted':
+                // Filter the accepted booking based on ID and status
+                const acceptedBooking = updatedBookings.filter(
+                    (booking) => booking.id === id && booking.status === 'accepted'
+                );
+                dispatch(setBookingPool({ active: acceptedBooking }));
+                break;
+            case 'started':
+                // Filter the started booking based on ID and status
+                const startedBooking = updatedBookings.filter(
+                    (booking) => booking.id === id && booking.status === 'started'
+                );
+                dispatch(setBookingPool({ active: startedBooking }));
+                break;
+            case 'picked-up':
+                // Update the status of the picked-up booking and set pickupTime
+                const pickedUpBooking = updatedBookings.map((booking) =>
+                    booking.id === id ? { ...booking, status: 'picked-up', pickupTime: new Date() } : booking
+                );
+                dispatch(setBookingPool({ pool: pickedUpBooking }));
 
-        if (newStatus === 'accepted') {
-            // Filter the accepted booking based on ID and status
-            const acceptedBooking = updatedBookings.filter(
-                (booking) => booking.id === id && booking.status === 'accepted'
-            );
-            dispatch(setBookingPool({ active: acceptedBooking }));
-        }
-
-        if (newStatus === 'started') {
-            // Filter the started booking based on ID and status
-            const startedBooking = updatedBookings.filter(
-                (booking) => booking.id === id && booking.status === 'started'
-            );
-            dispatch(setBookingPool({ active: startedBooking }));
-        }
-
-        if (newStatus === 'picked-up') {
-            // Update the status of the picked-up booking and set pickupTime
-            const pickedUpBooking = updatedBookings.map((booking) =>
-                booking.id === id ? { ...booking, status: 'picked-up', pickupTime: new Date() } : booking
-            );
-            dispatch(setBookingPool({ pool: pickedUpBooking }));
-
-            // Filter the active picked-up booking
-            const pickedUpBookingActive = pickedUpBooking.filter(
-                (booking) => booking.id === id && booking.status === 'picked-up'
-            );
-            dispatch(setBookingPool({ active: pickedUpBookingActive }));
-        }
-
-        if (newStatus === 'dropped-off') {
-            // Filter the dropped-off booking based on ID and status
-            const droppedOffBooking = updatedBookings.filter(
-                (booking) => booking.id === id && booking.status === 'dropped-off'
-            );
-            // Update completed bookings in Redux state
-            dispatch(setBookingPool({ completed: [...CompletedBooking, ...droppedOffBooking] }));
-            // Reset active bookings and close modal
-            dispatch(resetActivePool());
-            closeModal();
+                // Filter the active picked-up booking
+                const pickedUpBookingActive = pickedUpBooking.filter(
+                    (booking) => booking.id === id && booking.status === 'picked-up'
+                );
+                dispatch(setBookingPool({ active: pickedUpBookingActive }));
+                break;
+            case 'dropped-off':
+                // Filter the dropped-off booking based on ID and status
+                const droppedOffBooking = updatedBookings.filter(
+                    (booking) => booking.id === id && booking.status === 'dropped-off'
+                );
+                // Update completed bookings in Redux state
+                dispatch(setBookingPool({ completed: [...CompletedBooking, ...droppedOffBooking] }));
+                // Reset active bookings and close modal
+                dispatch(resetActivePool());
+                break;
+            default:
+                break;
         }
     };
 

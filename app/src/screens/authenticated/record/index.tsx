@@ -14,7 +14,7 @@ export default function Index() {
   }, {});
 
   const sortedSections = Object.keys(groupedData)
-    .sort((a, b) => new Date(b) - new Date(a)) // Sort from latest to oldest
+    .sort((a, b) => new Date(b) - new Date(a))
     .map((dateKey) => ({
       title: dateKey,
       data: groupedData[dateKey],
@@ -65,6 +65,11 @@ export default function Index() {
         renderItem={renderItem}
         renderSectionHeader={renderSectionHeader}
         keyExtractor={(item) => item.id}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No data available</Text>
+          </View>
+        )}
       />
     </View>
   );
@@ -89,5 +94,14 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#CCCCCC',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: Colors.dark50,
   },
 });
