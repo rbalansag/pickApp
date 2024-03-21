@@ -3,21 +3,25 @@ import { useDispatch } from 'react-redux';
 import { v4 as uuidv4 } from "uuid";
 import { setBookingPool } from '../../../../redux/slice/bookingPool_slice';
 import useGetCurrentLocation from './useGetCurrentLocation';
+import { Platform } from 'react-native';
 
-export default function useGetBookingInfo(user, refreshRate) {
+export default function useGetBookingInfo(user, refreshRate, reload) {
     const dispatch = useDispatch();
     const [isInitialized, setIsInitialized] = useState(false);
     const { currentLocation } = useGetCurrentLocation(user, refreshRate);
 
+
     useEffect(() => {
 
-        if((!isInitialized && !currentLocation?.latitude) || (isInitialized && currentLocation?.latitude)){
-            return;
+        if (Platform.OS === 'android') {
+            if ((!isInitialized && !currentLocation?.latitude) || (isInitialized && currentLocation?.latitude)) {
+                return;
+            }
         }
 
         setIsInitialized(true)
 
-        const getRandomNumber = () => Math.floor(Math.random() * 3) + 1; // Generate a random number between 1 and 3
+        const getRandomNumber = () => Math.floor(Math.random() * 3) + 1;
         const res = Array.from({ length: getRandomNumber() }, () => ({
             id: Math.random().toString(36).substr(2, 9),
             userId: uuidv4(),
@@ -40,7 +44,7 @@ export default function useGetBookingInfo(user, refreshRate) {
 
         dispatch(setBookingPool({ pool: res }));
 
-    }, [currentLocation]);
+    }, [reload]);
 
     return null;
 }

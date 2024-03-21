@@ -24,13 +24,12 @@ export default function MapScreen() {
     const BookingPool = useSelector(selectBookingPool);
     const ActiveBooking = useSelector(selectActive);
     const CompletedBooking = useSelector(selectComplete);
-
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [reload, setReload] = useState(false);
 
     const { currentLocation } = useGetCurrentLocation(user, refreshRate);
-    useGetBookingInfo(user, refreshRate);
+    useGetBookingInfo(user, refreshRate, reload);
 
     const [showTemporaryMarkers, setShowTemporaryMarkers] = useState(false);
     const [tempMarkersCoords, setTempMarkersCoords] = useState({ latitude: 0, longitude: 0 });
@@ -40,6 +39,7 @@ export default function MapScreen() {
         const allDeclinedOrEmpty = BookingPool.every(
             (booking) => booking.status === 'declined' || BookingPool.length === 0
         );
+
 
         if (allDeclinedOrEmpty) {
             dispatch(
@@ -54,7 +54,8 @@ export default function MapScreen() {
                 setReload(!reload);
             }, 2000);
         }
-    }, [BookingPool, dispatch]);
+    }, [BookingPool, dispatch, reload]);
+
 
     // Redirect to users current location
     const handleMapReady = () => {
@@ -206,10 +207,10 @@ export default function MapScreen() {
         dispatch(setBookingPool({ pool: updatedBookings }));
     };
 
-    if(!currentLocation?.latitude){
+    if (!currentLocation?.latitude) {
         return <></>
     }
-    
+
     return (
         <View style={{ flex: 1 }}>
             <MapView
